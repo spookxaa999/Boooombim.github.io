@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>БУМ БИМ | ROBOT MARKET</title>
+    <style>
+        /* РОБО-СТИЛЬ: ЧЕРНО-БЕЛЫЙ */
+        :root {
+            --bg: #000;
+            --text: #fff;
+            --border: 2px solid #fff;
+            --font: 'Courier New', Courier, monospace;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            margin: 0;
+            padding: 0;
+            text-transform: uppercase;
+        }
+
+        header {
+            border-bottom: var(--border);
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 { font-size: 3rem; margin: 0; letter-spacing: 5px; }
+        .slogan { font-size: 0.9rem; color: #aaa; margin-top: 10px; }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .btn {
+            background: none;
+            color: #fff;
+            border: var(--border);
+            padding: 10px 15px;
+            cursor: pointer;
+            font-family: var(--font);
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        /* КОРЗИНА ФИКСИРОВАННАЯ */
+        .cart-status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            border: var(--border);
+            padding: 10px;
+            background: #000;
+            z-index: 1000;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        /* ТОВАРЫ */
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            border: var(--border);
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .price { font-size: 1.5rem; margin: 15px 0; display: block; }
+
+        /* МОДАЛЬНЫЕ ОКНА */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: #000;
+            border: 3px solid #fff;
+            width: 90%;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 15px; top: 10px;
+            font-size: 1.5rem; cursor: pointer;
+        }
+
+        input {
+            background: #000;
+            color: #fff;
+            border: 1px solid #fff;
+            padding: 10px;
+            width: calc(100% - 22px);
+            margin: 10px 0;
+            font-family: var(--font);
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #444;
+            padding: 10px 0;
+        }
+
+        /* ФУТЕР */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: var(--border);
+            margin-top: 40px;
+        }
+
+        .warning-18 {
+            font-size: 2.5rem;
+            color: #fff;
+            border: 4px solid #fff;
+            display: inline-block;
+            padding: 10px 20px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cart-status" onclick="openModal('cart-modal')">
+        КОРЗИНА: <span id="cart-count">0</span> ШТ.<br>
+        СУММА: <span id="cart-total-top">0</span>₽
+    </div>
+
+    <header>
+        <h1>БУМ БИМ</h1>
+        <div class="slogan">самые лучшие носки у нас покупай скорей</div>
+        <nav>
+            <button class="btn" onclick="openModal('about-modal')">У НАС</button>
+            <button class="btn" onclick="openModal('contacts-modal')">КОНТАКТЫ</button>
+            <button class="btn" onclick="openModal('privacy-modal')">КОНФИДЕНЦИАЛЬНОСТЬ</button>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- ТОВАР 1 -->
+        <div class="product-card">
+            <div>
+                <h2>БОМБОЧКА</h2>
+                <p>(ИГРУШЕЧНАЯ, НЕНАСТОЯЩАЯ)</p>
+            </div>
+            <span class="price">150₽</span>
+            <button class="btn" onclick="addToCart('Бомбочка', 150)">ДОБАВИТЬ В КОРЗИНУ</button>
+        </div>
+
+        <!-- ТОВАР 2 -->
+        <div class="product-card">
+            <div>
+                <h2>ЧЕСНОЧКИ</h2>
+                <p>(ХЛОПУШКИ)</p>
+            </div>
+            <span class="price">50₽</span>
+            <button class="btn" onclick="addToCart('Чесночки', 50)">ДОБАВИТЬ В КОРЗИНУ</button>
+        </div>
+
+        <!-- ТОВАР 3 -->
+        <div class="product-card">
+            <div>
+                <h2>ПЕТАРДЫ</h2>
+                <p>(НЕНАСТОЯЩИЕ, БЕЗ ПОРОХА)</p>
+            </div>
+            <span class="price">650₽</span>
+            <button class="btn" onclick="addToCart('Петарды', 650)">ДОБАВИТЬ В КОРЗИНУ</button>
+        </div>
+
+        <!-- ТОВАР 4 (СЕКРЕТНЫЙ) -->
+        <div class="product-card">
+            <div>
+                <h2>РУЧКА</h2>
+                <p>(ФИРМЕННАЯ)</p>
+            </div>
+            <span class="price">100₽</span>
+            <button class="btn" onclick="addToCart('Ручка', 100)">ДОБАВИТЬ В КОРЗИНУ</button>
+        </div>
+    </div>
+
+    <!-- КОРЗИНА -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('cart-modal')">&times;</span>
+            <h2>ВАША КОРЗИНА</h2>
+            <div id="cart-items-list"></div>
+            <div style="margin-top: 20px;">
+                <strong>ИТОГО: <span id="cart-total-modal">0</span>₽</strong>
+            </div>
+            <button class="btn" style="width: 100%; margin-top: 20px;" onclick="openModal('payment-choice-modal')">ОФОРМИТЬ</button>
+        </div>
+    </div>
+
+    <!-- ВЫБОР ОПЛАТЫ -->
+    <div id="payment-choice-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('payment-choice-modal')">&times;</span>
+            <h2>СПОСОБ ОПЛАТЫ</h2>
+            <button class="btn" style="width: 100%; margin-bottom: 10px;" onclick="openModal('card-data-modal')">ПО ДАННЫМ КАРТЫ</button>
+            <button class="btn" style="width: 100%;" onclick="openModal('transfer-modal')">ПЕРЕВОДОМ</button>
+        </div>
+    </div>
+
+    <!-- ОПЛАТА КАРТОЙ -->
+    <div id="card-data-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('card-data-modal')">&times;</span>
+            <h2>ВВЕДИТЕ ДАННЫЕ</h2>
+            <input type="text" placeholder="НОМЕР КАРТЫ">
+            <input type="text" placeholder="СРОК ДЕЙСТВИЯ">
+            <input type="text" placeholder="CVV">
+            <button class="btn" style="width: 100%;" onclick="alert('Ошибка обработки. Попробуйте способ ПЕРЕВОДОМ.')">ОПЛАТИТЬ</button>
+        </div>
+    </div>
+
+    <!-- ПЕРЕВОД -->
+    <div id="transfer-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('transfer-modal')">&times;</span>
+            <h2>ИНСТРУКЦИЯ</h2>
+            <p>Сделайте перевод на номер:</p>
+            <p style="font-size: 1.2rem; border: 1px dashed #fff; padding: 10px;">+7 905 257 7534</p>
+            <p>ИМЯ: <strong>screech3705</strong></p>
+            <button class="btn" style="width: 100%;" onclick="alert('Напишите в техподдержку чтобы получить заказ')">Я ОПЛАТИЛ</button>
+        </div>
+    </div>
+
+    <!-- О НАС -->
+    <div id="about-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('about-modal')">&times;</span>
+            <h2>У НАС</h2>
+            <p>мы продаём всё доставка от нас не зависит</p>
+        </div>
+    </div>
+
+    <!-- КОНТАКТЫ -->
+    <div id="contacts-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('contacts-modal')">&times;</span>
+            <h2>КОНТАКТЫ</h2>
+            <p>ТЕХПОДДЕРЖКА: <strong>@Texsupportbombum</strong></p>
+        </div>
+    </div>
+
+    <!-- КОНФИДЕНЦИАЛЬНОСТЬ -->
+    <div id="privacy-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('privacy-modal')">&times;</span>
+            <h2>КОНФИДЕНЦИАЛЬНОСТЬ</h2>
+            <p>если вам меньше 18 лет то не покупайте игрушечные петарды советую вам купить чесночки или ещё что у нас есть в продаже ручки по 100₽</p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="warning-18">18 +</div>
+        <p>НЕ ПОКУПАЙТЕ КОМУ МЕНЬШЕ</p>
+    </footer>
+
+    <script>
+        let cart = [];
+
+        function addToCart(name, price) {
+            cart.push({name, price});
+            updateCart();
+            alert(name + " добавлен в корзину!");
+        }
+
+        function updateCart() {
+            document.getElementById('cart-count').innerText = cart.length;
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            document.getElementById('cart-total-top').innerText = total;
+            document.getElementById('cart-total-modal').innerText = total;
+
+            const list = document.getElementById('cart-items-list');
+            list.innerHTML = '';
+            cart.forEach(item => {
+                list.innerHTML += `<div class="cart-item"><span>${item.name}</span><span>${item.price}₽</span></div>`;
+            });
+        }
+
+        function openModal(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = "none";
+            }
+        }
+    </script>
+</body>
+              </html>
